@@ -4,7 +4,6 @@ from django.core.exceptions import SuspiciousOperation
 from django.views.decorators.csrf import csrf_exempt
 import urllib.request
 import json
-import random
 
 from .models import Reply
 
@@ -141,20 +140,27 @@ def reply(request):
         reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.POSITIVE)
         reply.save()
         response = {
-            'text': '<@{}> Great! :smile:'.format(user['id'])
+            'text': '<@{}> エンジニアリングコース'.format(user['id'])
         }
     elif selected_value == 'neutral':
         reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.NEUTRAL)
         reply.save()
         response = {
-            'text': '<@{}> Ok, thank you! :sweat_smile:'.format(user['id'])
+            'text': '<@{}> デザインコース'.format(user['id'])
         }
-    else:
+    elif selected_value == 'negative':
         reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.NEGATIVE)
         reply.save()
         response = {
-            'text': '<@{}> Good luck! :innocent:'.format(user['id'])
+            'text': '<@{}> ビジネスコース'.format(user['id'])
         }
+    else:
+        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.CIVIL)
+        reply.save()
+        response = {
+            'text': '<@{}> シビルシステムコース'.format(user['id'])
+        }
+    
     
     post_message(response_url, response)
     return JsonResponse({})
