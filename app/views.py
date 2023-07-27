@@ -16,11 +16,13 @@ def index(request):
     positive_replies = Reply.objects.filter(response=Reply.POSITIVE)
     neutral_replies = Reply.objects.filter(response=Reply.NEUTRAL)
     negative_replies = Reply.objects.filter(response=Reply.NEGATIVE)
+    civil_replies = Reply.objects.filter(response=Reply.CIVIL)
 
     context = {
         'positive_replies': positive_replies,
         'neutral_replies': neutral_replies,
         'negative_replies': negative_replies,
+        'civil_replies': civil_replies,
 
     }
     return render(request, 'index.html', context)
@@ -189,7 +191,7 @@ def shindan(request):
                     'type': 'static_select',
                     'placeholder': {
                         'type': 'plain_text',
-                        'text': '',
+                        'text': 'what do you want to do in the future',
                         'emoji': True
                     },
                     'options': [

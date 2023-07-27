@@ -62,6 +62,16 @@
           {% endfor %}
         </div>
       </div>
+      <div class="card mt-3">
+        <h3 class="card-header">
+          Civil people
+        </h3>
+        <div class="card-body">
+          {% for reply in ncivil_replies %}
+          <p> {{reply.user_name}} </p>
+          {% endfor %}
+        </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
       integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
