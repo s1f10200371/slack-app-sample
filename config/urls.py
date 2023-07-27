@@ -24,5 +24,6 @@ urlpatterns = [
     path('clear', app_views.clear, name='clear'),
     path('api/echo', app_views.echo, name='api_echo'),
     path('api/hello', app_views.hello, name='api_hello'),
-    path('api/reply', app_views.reply, name='api_reply')
+    path('api/shindan',app_views.shindan,name='api_shindan'),
+    path('api/reply2',app_views.reply2,name='api_reply2')
 ]
