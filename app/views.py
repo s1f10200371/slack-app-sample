@@ -4,6 +4,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.views.decorators.csrf import csrf_exempt
 import urllib.request
 import json
+import random
 
 from .models import Reply
 
@@ -237,7 +238,7 @@ def shindan(request):
 
 @csrf_exempt
 def reply2(request):
-    if request.method != 'POST':
+    if request.method!= 'POST':
         return JsonResponse({})
     
     payload = json.loads(request.POST.get('payload'))
