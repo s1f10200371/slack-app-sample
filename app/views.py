@@ -165,6 +165,7 @@ def post_message(url, data):
     with urllib.request.urlopen(req) as res:
         body = res.read()
 
+@csrf_exempt
 def shindan(request):
     if request.method != 'POST':
         return JsonResponse({})
@@ -182,49 +183,47 @@ def shindan(request):
                 'type' : 'section',
                 'text' : {
                     'type': 'mrkdwn',
-                    'text': '<@{}> How are you?'.format(user_id)
+                    'text': '<@{}> 将来なにしたい?'.format(user_id)
                 },
                 'accessory': {
                     'type': 'static_select',
                     'placeholder': {
                         'type': 'plain_text',
-                        'text': '将来は何がしたい?:',
+                        'text': '',
+                        'emoji': True
                     },
                     'options': [
                         {
                             'text': {
                                 'type': 'plain_text',
-                                'text': 'ソフトウェアの開発に興味がある!',
+                                'text': 'ソフトウェアの開発がしたい！',
+                                'emoji': True
                             },
-                            'value': 'engineering'
+                            'value': 'positive'
                         },
                         {
                             'text': {
                                 'type': 'plain_text',
-                                'text': 'サイトのデザイン等を設計してみたい'
+                                'text': 'サイトのデザインなどを設計したい',
+                                'emoji': True
                             },
-                            'value': 'design'
+                            'value': 'neutral'
                         },
                         {
                             'text': {
                                 'type': 'plain_text',
-                                'text': '経営に関わりたい。',
+                                'text': '経営に関わりたい',
+                                'emoji': True
                             },
-                            'value': 'business'
+                            'value': 'negative'
                         },
                         {
                             'text': {
                                 'type': 'plain_text',
-                                'text': 'コミュニティ形成や社会コミュニケーションの活性に興味がある。',
-                                },
-                            'value': 'civilsystem'
-                        },
-                        {
-                            'text': {
-                                'type': 'plain_text',
-                                'text': 'パソコンに関する仕事がしたい！'
+                                'text': 'コミュニティ形成や社会コミュニケーションの活性に興味がある',
+                                'emoji': True
                             },
-                            'value': 'random'
+                            'value': 'civil'
                         }
                     ],
                     'action_id': ACTION_HOW_ARE_YOU
@@ -238,11 +237,10 @@ def shindan(request):
 
 @csrf_exempt
 def reply2(request):
-    if request.method!= 'POST':
+    if request.method != 'POST':
         return JsonResponse({})
     
     payload = json.loads(request.POST.get('payload'))
-    print(payload)
     if payload.get('token') != VERIFICATION_TOKEN:
         raise SuspiciousOperation('Invalid request.')
     
@@ -253,37 +251,38 @@ def reply2(request):
     selected_value = payload['actions'][0]['selected_option']['value']
     response_url = payload['response_url']
 
-    if selected_value == 'engineering':
-        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.ENGINIEERING)
+    if selected_value == 'positive':
+        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.POSITIVE)
         reply.save()
         response = {
-            'text': '<@{}> エンジニアリングコース!'.format(user['id'])
+            'text': '<@{}> エンジニアリングコース'.format(user['id'])
         }
-    elif selected_value == 'design':
-        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.DESIGN)
+    elif selected_value == 'neutral':
+        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.NEUTRAL)
         reply.save()
         response = {
-            'text': '<@{}> デザインコース! '.format(user['id'])
+            'text': '<@{}> デザインコース :sweat_smile:'.format(user['id'])
         }
-    elif selected_value == 'business':
-        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.BUSINESS)
+    elif selected_value == 'negative':
+        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.NEGATIVE)
         reply.save()
         response = {
-            'text': '<@{}> ビジネスコースが向いています。'.format(user['id'])
+            'text': '<@{}> ビジネスコース'.format(user['id'])
         }
-    elif selected_value == 'civilsystem':
-        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.CIVILSYSTEM)
-        reply.save()
-        response = {
-            'text': '<@{}> シビルシステムコースに行こう！！'.format(user['id'])
-        }        
     else:
-        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.RANDOM)
+        reply = Reply(user_name=user['name'], user_id=user['id'], response=Reply.CIVIL)
         reply.save()
-        iniad_course=['エンジニアコースでプログラミングしよう！','デザインコースに行こう！！','ならシビルシステムコースだね！','ビジネスコースに決まりだ！']
         response = {
-            'text': '<@{}>{}'.format(user['id'],random.choice(iniad_course))
+            'text': '<@{}> シビルシステムコース'.format(user['id'])
         }
     
     post_message(response_url, response)
     return JsonResponse({})
+
+def post_message(url, data):
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    req = urllib.request.Request(url, json.dumps(data).encode(), headers)
+    with urllib.request.urlopen(req) as res:
+        body = res.read()
